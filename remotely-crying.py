@@ -1,5 +1,8 @@
 #/usr/env/python3
 
+# remotely-crying
+# Uses wmiexec and schtasks to remotely execute a file interactively on the remote user's desktop
+
 import argparse
 import fileinput
 import time
