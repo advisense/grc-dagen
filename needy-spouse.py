@@ -1,7 +1,7 @@
 #/usr/env/python3
 
 # needy-spouse
-# uses the Sinch API to mass call a list of numbers
+# uses the Sinch API to mass call a list of numbers with random text-to speech messages
 
 import requests
 
@@ -86,10 +86,10 @@ def _main():
     import random
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--key', help='API key')
-    parser.add_argument('--secret', help='API secret')
-    parser.add_argument('--numbers', metavar='FILE', required=True, help='file(s) with numbers to call')
-    parser.add_argument('--messages', metavar='FILE', required=True, help='file(s) with messages')
+    parser.add_argument('--key', help='API key', required=True)
+    parser.add_argument('--secret', help='API secret', required=True)
+    parser.add_argument('--numbers', metavar='FILES', required=True, help='file(s) with numbers to call')
+    parser.add_argument('--messages', metavar='FILES', required=True, help='file(s) with messages')
     args = parser.parse_args()
 
     key = args.key
