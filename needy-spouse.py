@@ -1,20 +1,9 @@
 #/usr/env/python3
 
 # needy-spouse
-# uses an API to mass call a list of numbers
+# uses the Sinch API to mass call a list of numbers
 
 import requests
-
-# api = 'https://calling.api.sinch.com/v1'
-# endpoint = 'https://callingapi.sinch.com/v1/callouts'
-
-# body = '{"method": "ttsCallout", "ttsCallout": {"destination": {"type": "number", "endpoint": "+4791301230"}, "text": "Test"}}'
-
-# content-type = application/json; charset=UTF-8
-
-
-# response = requests.get(api)
-# print(response.text)
 
 try:
     import urllib.request as urllib2
@@ -92,21 +81,27 @@ class SinchCall(object):
 def _main():
     """ A simple demo to be used from command line. """
     import sys
+    import argparse
+    import fileinput
+    import random
 
-    def log(message):
-        print(message)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--key', help='API key')
+    parser.add_argument('--secret', help='API secret')
+    parser.add_argument('--numbers', metavar='FILE', required=True, help='file(s) with numbers to call')
+    parser.add_argument('--messages', metavar='FILE', required=True, help='file(s) with messages')
+    args = parser.parse_args()
 
-    def print_usage():
-        log('usage: %s <application key> <application secret> call <number> <message>' % sys.argv[0])
+    key = args.key
+    secret = args.secret
+    numbers = open(args.numbers,'r').read().splitlines()
+    messages = open(args.messages,'r').read().splitlines()
 
-    if len(sys.argv) > 4 and sys.argv[3] == 'call':
-        key, secret, number, message = sys.argv[1], sys.argv[2], sys.argv[4], sys.argv[5]
-        client = SinchCall(key, secret)
-        log(client.call(number, message))
-    else:
-        print_usage()
-        sys.exit(1)
-
+    for number in numbers:
+	    message = random.choice(messages)
+	    client = SinchCall(key, secret)
+	    print('Calling {0} with the message "{1}": {2}'.format(number, message, client.call(number, message)))
+    
     sys.exit(0)
 
 if __name__ == '__main__':
