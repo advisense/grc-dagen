@@ -4,14 +4,7 @@
 # uses the Sinch API to mass call a list of numbers with random text-to speech messages
 
 import requests
-
-requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':RC4-SHA'
-try:
-    requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += ':RC4-SHA'
-except AttributeError:
-    # no pyopenssl support used / needed / available
-    print('Warning: SSL handshake may fail')
-    pass
+import ssl
 
 try:
     import urllib.request as urllib2
@@ -42,18 +35,24 @@ class SinchCall(object):
 
             Sends a get request if values are None, post request otherwise.
         """
+        # Workaround to compensate for Sinch poor SSL/TLS cipher suites
+        ctx = ssl.create_default_context()
+        ctx.set_ciphers('HIGH:!DH:!aNULL')
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+
         if values:
             json_data = json.dumps(values)
             request = urllib2.Request(url, json_data.encode())
             request.add_header('content-type', 'application/json')
             request.add_header('authorization', self._auth)
-            connection = urllib2.urlopen(request)
+            connection = urllib2.urlopen(request, context=ctx)
             response = connection.read()
             connection.close()
         else:
             request = urllib2.Request(url)
             request.add_header('authorization', self._auth)
-            connection = urllib2.urlopen(request)
+            connection = urllib2.urlopen(request, context=ctx)
             response = connection.read()
             connection.close()
 
