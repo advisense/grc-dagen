@@ -7,6 +7,13 @@ import requests
 
 try:
     import urllib.request as urllib2
+    urllib3.util.ssl_.DEFAULT_CIPHERS += ':RC4-SHA'
+    try:
+        urllib2.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += ':RC4-SHA'
+    except AttributeError:
+        # no pyopenssl support used / needed / available
+        print('Warning: SSL may fail')
+        pass
 except ImportError:
     import urllib2
 
