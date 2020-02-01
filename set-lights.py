@@ -27,6 +27,7 @@ import argparse
 import threading
 import time
 
+
 CONFIG_FILE = 'tradfri_standalone_psk.conf'
 
 RED_XY = (42926, 21299)
@@ -100,17 +101,21 @@ def run():
 
     lights = [dev for dev in devices if dev.has_light_control]
 
-    # Lights can be accessed by its index, so lights[1] is the second light
-    # Print all lights
+    # Lights can be accessed by its index, so lights[1] is the second light 
+    # Pause in seconds
+    pause = 2
+    j = len(lights)
     if lights:
         for i, light in enumerate(lights):
+            if i != 0:
+                print('Waiting for {0:f} seconds'.format(pause))
+                time.sleep(pause)
+            print(light.name)
             api(light.light_control.set_xy_color(RED_XY[0], RED_XY[1]))
-            time.sleep(1)
+            time.sleep(0.5)
             api(light.light_control.set_dimmer(254))
-            #for j in range(1, 254, 10):
-            #    api(light.light_control.set_dimmer(j))
-            #    time.sleep(0.1)
-
+            if i > j / 6: # Accellerate
+                pause = pause * 0.6
     else:
         print("No lights found!")
         light = None
